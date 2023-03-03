@@ -1,0 +1,105 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.IO;
+
+namespace matrix_fajlbol_2023_03_03
+{
+    class Program
+    {
+        static int[,] matrix = new int[10, 10];
+        static List<Megoldas> megoldasok = new List<Megoldas>();
+        static void Main(string[] args)
+        {
+            Fajlbeolvasas();
+            MatrixKiir();
+            Koordinatak();
+            Fajlbolmegoldasok();
+            EnnekaKiirasaHazi();
+            //hazi : lista kiirasa es 1,2,3,4 2011-maj-1,2,3,4,5,6
+            Console.ReadLine();
+        }
+        static void Fajlbeolvasas()
+        {
+            StreamReader f = new StreamReader("rejtveny.txt");
+
+            int j = 0;
+            while (!f.EndOfStream)
+            {
+                string sor = f.ReadLine();
+                string[] st = sor.Split(' ');
+                for (int i = 0; i < st.Length; i++)
+                {
+                    matrix[j, i] = Convert.ToInt32(st[i]);
+                }
+                j++;
+            }
+            f.Close();
+            
+        }
+        static void Koordinatak()
+        {
+            for (int i = 0; i < matrix.GetLength(0); i++)
+            {
+                for (int j = 0; j < matrix.GetLength(1); j++)
+                {
+                    if (matrix[i, j] > 0)
+                    {
+                        Console.WriteLine("A koordináta: sor:{0}, oszlop:{1} ----> ({2};{3}).", i+1, j+1,i+1,j+1);
+                    }
+                }
+            }
+
+        }
+        static void MatrixKiir()
+        {
+            for (int i = 0; i < matrix.GetLength(0); i++)
+            {
+                for (int j = 0; j < matrix.GetLength(1); j++)
+                {
+                    Console.Write(matrix[i, j] + "\t");
+                }
+                Console.WriteLine();
+
+            }
+
+        }
+        static void Fajlbolmegoldasok()
+        {
+            StreamReader g = new StreamReader("megoldasok.txt");
+            int n =Convert.ToInt32(g.ReadLine());
+            int j = 0;
+            for (int i = 0; i < n; i++)
+            {
+                Megoldas sv = new Megoldas();
+                sv.nev = g.ReadLine();
+                int[,] sm = new int[10, 10];
+                for (int z = 0; z < 10; z++)
+                {
+                string[] st = g.ReadLine().Split(' ');
+                    for (int x = 0; x < st.Length;x++)
+                    {
+                        sm[z, x] = Convert.ToInt32(st[x]);
+                    }
+
+                }
+                sv.tabla = sm;
+                megoldasok.Add(sv);
+            }
+            g.Close();
+        }
+        static void EnnekaKiirasaHazi()
+        { }
+    }
+    struct Megoldas
+    {
+        public string nev;
+        public int[,] tabla;
+    }
+}
+
+    
+
+
