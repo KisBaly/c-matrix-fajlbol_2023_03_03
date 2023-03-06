@@ -4,24 +4,30 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Runtime.Remoting.Metadata.W3cXsd2001;
+using System.Security.Cryptography;
 
-namespace matrix_fajlbol_2023_03_03
+namespace _2011_maj_idegen_hazi_2023_03_06
 {
     class Program
     {
+        //hazi : lista kiirasa es 1,2,3,4 2011-maj-1,2,3,4,(5,6)
         static int[,] matrix = new int[10, 10];
         static List<Megoldas> megoldasok = new List<Megoldas>();
         static void Main(string[] args)
         {
-            Fajlbeolvasas();
+            Feladvanybeolv();
+            MegoldasokBeolv();
             MatrixKiir();
+            ListaKiir();
             Koordinatak();
-            Fajlbolmegoldasok();
-            EnnekaKiirasaHazi();
-            //hazi : lista kiirasa es 1,2,3,4 2011-maj-1,2,3,4,5,6
+            (int a, int b) = Feladat1();
+            Feladat2(a, b);
+            Feladat3();
             Console.ReadLine();
         }
-        static void Fajlbeolvasas()
+
+        static void Feladvanybeolv()
         {
             StreamReader f = new StreamReader("rejtveny.txt");
 
@@ -37,39 +43,12 @@ namespace matrix_fajlbol_2023_03_03
                 j++;
             }
             f.Close();
-            
-        }
-        static void Koordinatak()
-        {
-            for (int i = 0; i < matrix.GetLength(0); i++)
-            {
-                for (int j = 0; j < matrix.GetLength(1); j++)
-                {
-                    if (matrix[i, j] > 0)
-                    {
-                        Console.WriteLine("A koordináta: sor:{0}, oszlop:{1} ----> ({2};{3}).", i+1, j+1,i+1,j+1);
-                    }
-                }
-            }
 
         }
-        static void MatrixKiir()
+        static void MegoldasokBeolv()
         {
-            for (int i = 0; i < matrix.GetLength(0); i++)
-            {
-                for (int j = 0; j < matrix.GetLength(1); j++)
-                {
-                    Console.Write(matrix[i, j] + "\t");
-                }
-                Console.WriteLine();
-
-            }
-
-        }
-        static void Fajlbolmegoldasok()
-        {
-            StreamReader g = new StreamReader("megoldasok.txt");
-            int n =Convert.ToInt32(g.ReadLine());
+            StreamReader g = new StreamReader("megoldas.txt");
+            int n = Convert.ToInt32(g.ReadLine());
             int j = 0;
             for (int i = 0; i < n; i++)
             {
@@ -78,8 +57,8 @@ namespace matrix_fajlbol_2023_03_03
                 int[,] sm = new int[10, 10];
                 for (int z = 0; z < 10; z++)
                 {
-                string[] st = g.ReadLine().Split(' ');
-                    for (int x = 0; x < st.Length;x++)
+                    string[] st = g.ReadLine().Split(' ');
+                    for (int x = 0; x < st.Length; x++)
                     {
                         sm[z, x] = Convert.ToInt32(st[x]);
                     }
@@ -90,8 +69,113 @@ namespace matrix_fajlbol_2023_03_03
             }
             g.Close();
         }
-        static void EnnekaKiirasaHazi()
-        { }
+        static void MatrixKiir()
+        {
+            for (int l = 0; l < matrix.GetLength(0); l++)
+            {
+                for (int m = 0; m < matrix.GetLength(1); m++)
+                {
+                    Console.Write(matrix[l, m] + "\t");
+                }
+
+            }
+            Console.WriteLine();
+
+        }
+        static void ListaKiir()
+        {
+            for (int i = 0; i < megoldasok.Count; i++)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Megoldó neve: {0}.", megoldasok[i].nev);
+                Console.Write("Megoldásai: ");
+                for (int j = 0; j < megoldasok.Count; j++)
+                {
+                    Console.Write(megoldasok[i].tabla[i, j] + " ");
+                   
+                }
+            }
+            Console.WriteLine();
+
+        }
+
+        static void Koordinatak()
+        {
+            Console.WriteLine();
+            for (int i = 0; i < matrix.GetLength(0); i++)
+            {
+                for (int j = 0; j < matrix.GetLength(1); j++)
+                {
+                    if (matrix[i, j] > 0)
+                    {
+                        Console.WriteLine("A koordináta: sor:{0}, oszlop:{1} ----> ({2};{3}).", i + 1, j + 1, i + 1, j + 1);
+                    }
+                }
+            }
+
+        }
+        private static (int a, int b) Feladat1()
+        {
+            Console.WriteLine("1. feladat");
+            Console.WriteLine("A legkisseb megadható érték: (1).");
+            Console.Write("Add meg a sorszámát a toronynak: ");
+            int sor = Convert.ToInt32(Console.ReadLine());
+            Console.Write("Add meg az oszlopszámát a toronynak: ");
+            int oszlop = Convert.ToInt32(Console.ReadLine());
+            Console.Write("Adja meg a világítótoronyban látható hajók számát: ");
+            int hajok = Convert.ToInt32(Console.ReadLine());
+            if (hajok > 3)
+                Console.WriteLine("Nehéz torony");
+            return (sor, oszlop);
+        }
+        private static void Feladat2(int sor, int oszlop)
+        {
+            Console.WriteLine("2. feladat");
+            for (int i = -1; i < 2; i++)
+            {
+                for (int j = -1; j < 2; j++)
+                {
+                    if (sor + i > 0 && sor + i < 11 && oszlop + j > 0 && oszlop + j < 11 && (i != 0 || j != 0))
+                        Console.WriteLine((sor + i) + " " + (oszlop + j));
+                }
+            }
+        }
+        private static void Feladat3()
+        {
+            Console.WriteLine("3.Feladat");
+            Feladvanybeolv();
+            int db = 0;
+            for (int i = 0; i < megoldasok.Count; i++)
+            {
+                if (!Feladat3ellenorzes(megoldasok[i].tabla))
+                {
+                    db++;
+                    Console.WriteLine("A megfejtő(k) neve(i):{0},",megoldasok[i].nev);
+                }
+                
+            }
+        }
+        private static bool Feladat3ellenorzes(int[,] tabla)
+        {
+            bool jovnem = false;
+            int i = 0;
+            while (i < tabla.GetLength(0) && !jovnem)
+            {
+                int j = 0;
+                while (j < tabla.GetLength(1) && (tabla[i, j] == matrix[i, j] || tabla[i, j] == 11))
+                    j++;
+                jovnem = j < tabla.GetLength(1);
+                i++;
+            }
+            return !jovnem;
+
+        }
+
+        static void Feladat4()
+        {
+
+        }
+
     }
     struct Megoldas
     {
@@ -99,7 +183,3 @@ namespace matrix_fajlbol_2023_03_03
         public int[,] tabla;
     }
 }
-
-    
-
-
